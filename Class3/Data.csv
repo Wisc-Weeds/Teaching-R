@@ -1,0 +1,49 @@
+trt,trtn,rep,crop,control
+Tillage + POST,1,1,Soybean,0.3
+Tillage + POST,1,2,Soybean,0.3
+Tillage + POST,1,3,Soybean,0.2
+Tillage + POST,1,4,Soybean,0.3
+No-till + POST,3,1,Soybean,0.5
+No-till + POST,3,2,Soybean,0.7
+No-till + POST,3,3,Soybean,0.99
+No-till + POST,3,4,Soybean,0.9
+Cereal Rye terminated 2 weeks prior to plant + POST,3,1,Soybean,0.75
+Cereal Rye terminated 2 weeks prior to plant + POST,3,2,Soybean,0.99
+Cereal Rye terminated 2 weeks prior to plant + POST,3,3,Soybean,0.8
+Cereal Rye terminated 2 weeks prior to plant + POST,3,4,Soybean,0.75
+Cereal Rye terminated at plant + POST,4,1,Soybean,0.9
+Cereal Rye terminated at plant + POST,4,2,Soybean,0.99
+Cereal Rye terminated at plant + POST,4,3,Soybean,0.99
+Cereal Rye terminated at plant + POST,4,4,Soybean,0.85
+Cerealy Rye forage harvest + POST,5,1,Soybean,0.99
+Cerealy Rye forage harvest + POST,5,2,Soybean,0.99
+Cerealy Rye forage harvest + POST,5,3,Soybean,0.99
+Cerealy Rye forage harvest + POST,5,4,Soybean,0.99
+Cereal Rye terminated 2 weeks after plant + POST,6,1,Soybean,0.99
+Cereal Rye terminated 2 weeks after plant + POST,6,2,Soybean,0.99
+Cereal Rye terminated 2 weeks after plant + POST,6,3,Soybean,0.99
+Cereal Rye terminated 2 weeks after plant + POST,6,4,Soybean,0.99
+Tillage + PRE fb POST,7,1,Soybean,0.95
+Tillage + PRE fb POST,7,2,Soybean,0.99
+Tillage + PRE fb POST,7,3,Soybean,0.9
+Tillage + PRE fb POST,7,4,Soybean,0.95
+No-till + PRE fb POST,8,1,Soybean,0.9
+No-till + PRE fb POST,8,2,Soybean,0.3
+No-till + PRE fb POST,8,3,Soybean,0.8
+No-till + PRE fb POST,8,4,Soybean,0.9
+Cereal Rye terminated 2 weeks prior to plant + PRE fb POST,9,1,Soybean,0.8
+Cereal Rye terminated 2 weeks prior to plant + PRE fb POST,9,2,Soybean,0.99
+Cereal Rye terminated 2 weeks prior to plant + PRE fb POST,9,3,Soybean,0.99
+Cereal Rye terminated 2 weeks prior to plant + PRE fb POST,9,4,Soybean,0.99
+Cereal Rye terminated at plant + PRE fb POST,10,1,Soybean,0.9
+Cereal Rye terminated at plant + PRE fb POST,10,2,Soybean,0.9
+Cereal Rye terminated at plant + PRE fb POST,10,3,Soybean,0.99
+Cereal Rye terminated at plant + PRE fb POST,10,4,Soybean,0.99
+Cerealy Rye forage harvest + PRE fb POST,11,1,Soybean,0.95
+Cerealy Rye forage harvest + PRE fb POST,11,2,Soybean,0.99
+Cerealy Rye forage harvest + PRE fb POST,11,3,Soybean,0.99
+Cerealy Rye forage harvest + PRE fb POST,11,4,Soybean,0.99
+Cereal Rye terminated 2 weeks after plant + PRE fb POST,12,1,Soybean,0.99
+Cereal Rye terminated 2 weeks after plant + PRE fb POST,12,2,Soybean,0.99
+Cereal Rye terminated 2 weeks after plant + PRE fb POST,12,3,Soybean,0.99
+Cereal Rye terminated 2 weeks after plant + PRE fb POST,12,4,Soybean,0.99

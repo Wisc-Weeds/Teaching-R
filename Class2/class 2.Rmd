@@ -1,0 +1,172 @@
+---
+title: "Class 2"
+author: "Maxwel Coura Oliveira"
+date: "9/23/2019"
+output:
+  html_document:
+    df_print: paged
+---
+
+# Dplyr
+
+
+```{r}
+library(tidyverse) # load the package
+```
+
+## Import the data
+
+```{r}
+data <- mpg # mpg is a dataset in R about vehicles 
+glimpse(data) # Information dense summary of tbl data.
+names(data) # names of the variables
+```
+
+### Functions
+
+- Pipe (%>%) 
+
+- Equal to (==)
+
+- Not equal to (!=)
+
+- Greater (>)
+
+- Less than (<)
+
+- Less than or equal to (<=)
+
+- Greater than or equal to (>=)
+
+- Is NA (is.na)
+
+
+### Select 
+
+```{r}
+data %>% 
+  select(year, trans, hwy, drv)
+```
+
+```{r}
+data %>% 
+  select(-year, -trans, -hwy)
+```
+
+
+### Filter 
+
+```{r}
+data %>% 
+  filter(year > 2000 &  manufacturer == "dodge" & model == "durango 4wd")
+```
+
+
+### Arrange
+
+
+```{r}
+data %>% 
+  arrange(year)
+```
+
+
+```{r}
+data %>% 
+  arrange(desc(year))
+```
+
+
+
+
+### Rename
+
+```{r}
+data %>% 
+  rename(transmission = trans, manuf = manufacturer, engine = displ)
+```
+
+### Mutate
+
+```{r}
+data %>% 
+  mutate(Miles = cty + hwy)
+```
+
+
+```{r}
+data %>% 
+  mutate(milesD = cty - mean(cty, na.rm=TRUE))
+```
+
+
+
+### Summarise
+
+```{r}
+data %>% 
+  summarise(hwyavg = mean(hwy), med = median(hwy))
+```
+
+```{r}
+data %>% 
+  summarise_each(funs = (mean))
+```
+
+*Exercice*. Try using min, max, median, var and sd.
+
+### Group by
+
+```{r}
+data %>% 
+  group_by(manufacturer) %>% 
+  summarise(hwyavg = mean(hwy))
+```
+
+
+
+
+```{r}
+data1 <- data %>% 
+  mutate(miles = factor(1*(cty > 20), labels = c("High", "Low")))
+```
+
+```{r}
+data2 <- data1 %>% 
+  mutate(miles2 = factor(1*(hwy > 25), labels = c("High", "Low")))
+```
+
+```{r}
+data1 %>% 
+  group_by(manufacturer, miles) %>% 
+  summarise(cmean = mean(cty), cmax = max(cty), cmin = min(cty))
+```
+
+
+
+# GGPLOT 
+
+```{r}
+library(ggthemes)
+```
+
+```{r}
+data %>% 
+  group_by(manufacturer) %>% 
+  summarise(hwyavg = mean(hwy)) %>% 
+  ggplot(aes(x=manufacturer, y=hwyavg, fill=manufacturer)) + geom_bar(stat="identity") + coord_flip() + theme_wsj() + #scale_fill_manual(values=c("red", ))
+  #scale_fill_brewer(palette = "Paired") +
+  ggsave("Figure1.pdf", width = 10, height = 8, dpi=400)
+```
+
+
+
+```{r}
+data %>% #disp = engine size
+  ggplot(aes(x=displ, y=cty, color=manufacturer)) + geom_boxplot()
+```
+
+
+
+
+

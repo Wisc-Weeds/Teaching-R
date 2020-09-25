@@ -1,0 +1,408 @@
+---
+title: "Data Analysis in R"
+subtitle: "Analysis of Variance (ANOVA)"
+author: "Maxwel Coura Oliveira, PhD"
+date: "University of Wisconsin-Madison"
+output: beamer_presentation
+theme: CambridgeUS
+header-includes:
+  
+- \titlegraphic{\centering \includegraphics[width=2cm]{figures/logo.png}}
+#logo: figures/logo.png
+---
+
+```{r include=FALSE}
+library(ggplot2)
+library(tidyverse)
+library(ggpubr)
+library(car)
+```
+
+
+## Check your data
+
+- **Quantitative** data is information about quantities; that is, information that can be measured and written down with numbers.
+*Example*: x-axis = 1.5, 5.6, 12.8, 26.7. 39.4, 45.1
+  - Proceed with regression
+  - Numeric or integer
+- **Qualitative** data is information about qualities; information that can't actually be measured. 
+*Example*: x-axis = Pursuit, Roundup, Callisto
+  - Proceed with ANOVA
+  - Factor
+
+## Quantitative data
+
+```{r echo=FALSE, out.width = '80%', fig.align='center'}
+plot(pressure, pch=16)
+```
+
+## Qualitative data
+
+```{r echo=FALSE, out.width = '80%',  fig.align='center'}
+y <- c(10, 20, 45, 70, 99, 90)
+x <- c("Pursuit", "Raptor", "Callisto", "Flex", "Roundup", "Enlist")
+data<-data.frame(x,y)
+ggplot(data, aes(x=x, y=y, fill=x)) + geom_bar(stat="identity") + labs(x="", y="Waterhemp control (%)") + theme(legend.position = "none", axis.title = element_text(size=12), axis.text = element_text(size=10))
+```
+
+## The ANOVA Test
+
+- A way to find if experiment results are significant. It helps you to figure out if you need to reject the null hypothesis or accept the alternate hypothesis
+
+- Test groups to see if there’s a difference between them
+  - A group of weed scientists are trying different herbicides for Palmer amaranth control. You want to see if one herbicide is better than others
+  - A company has 20 industrial hemp varieties from outside United States. They want to know which ones performed better in Wisconsin
+  - Students from different colleges take the same exam. You want to see if one college outperforms the other
+  
+
+
+## Assumptions of ANOVA
+
+- Independence
+
+- Normality
+
+- Homogeneity of variances (aka, Homoscedasticity)
+
+
+## Parametric and Non-Parametric Tests
+
+- **Parametric Tests**: Relies on theoretical distributions of the test statistic under the null hypothesis and assumptions about the distribution of the sample data (i.e., normality)
+
+- **Non-Parametric Tests**: Referred to as “Distribution Free” as they do not assume that data are drawn from any particular distribution
+
+
+## Case of study
+
+- Using the data **barley** from package *lattice*
+
+\scriptsize
+```{r}
+library(lattice)
+sample_n(barley, 5)
+```
+
+\normalsize
+- A data frame with 120 observations on the following 4 variables
+  - Yield (averaged across three blocks) in bushels/acre.
+  - Variety (factor) with 10 levels "Svansota", "No. 462", "Manchuria", "No. 475", "Velvet", "Peatland", "Glabron", "No. 457", "Wisconsin No. 38", "Trebi".
+  - Year (factor) with 2 levels 1931 and 1932
+  - Site (factor) with 6 levels: "Grand Rapids", "Duluth", "University Farm", "Morris", "Crookston", "Waseca"
+
+## Homogeneity of variances
+
+- [Bartlett test](https://www.itl.nist.gov/div898/handbook/eda/section3/eda357.htm)
+
+\scriptsize
+```{r}
+bartlett.test(yield ~ variety, data = barley)
+```
+\normalsize
+- [Levene test](https://www.itl.nist.gov/div898/handbook/eda/section3/eda35a.htm)
+
+\scriptsize
+```{r}
+leveneTest(barley$yield, barley$variety)
+```
+
+
+
+
+## Normality
+
+- Density plot: the density plot provides a visual judgment about whether the distribution is bell shaped.
+
+\scriptsize
+```{r warning=FALSE, out.width = '50%', fig.align='center'}
+ggdensity(barley$yield, 
+          main = "Dens plot of barley yield",
+          xlab = "Barley yield") 
+```
+\normalsize
+
+## Q-Q plot
+
+
+- Q-Q plot: Q-Q plot (or quantile-quantile plot) draws the correlation between a given sample and the normal distribution. A 45-degree reference line is also plotted.
+
+```{r echo=TRUE, out.width = '50%', fig.align='center'}
+ggqqplot(barley$yield)
+```
+
+## Normality test
+
+
+```{r}
+library(nortest)
+pearson.test(barley$yield)
+```
+
+- From the output, the p-value > 0.05 implying that the distribution of the data are not significantly different from normal distribution. In other words, we can assume the normality.
+
+
+- Other tests of normality (Shapiro-Wilk)
+
+
+## Data transformation
+
+- Assuming data (barley yield) is non-gaussean (non-normal)
+
+- Load the package [*bestNormalize*](https://cran.r-project.org/web/packages/bestNormalize/bestNormalize.pdf)
+```{r, warning=FALSE}
+#install.packages("bestNormalize") # if needed 
+library(bestNormalize)
+```
+
+```{r, echo=FALSE, fig.cap="", out.width = '50%', fig.align="center", fig.retina = 2, fig.pos='h'}
+knitr::include_graphics("figures/bestn.png")
+```
+
+
+## Transforming the data
+
+- 
+```{r warning=FALSE, out.height=1, out.width=1}
+data <- bestNormalize(barley$yield, loo = TRUE)
+data
+```
+
+## Visual plots of transformed yield date
+
+- Density plot: the density plot provides a visual judgment about whether the distribution is bell shaped (transformed data)
+
+```{r warning=FALSE, out.width = '50%', fig.align='center'}
+ggdensity(data$x.t, 
+          main = "Density plot of barley yield",
+          xlab = "Barley yield")
+```
+
+## Q-Q plot of transformed yield date
+
+- Q-Q plot: Q-Q plot (or quantile-quantile plot) draws the correlation between a given sample and the normal distribution. A 45-degree reference line is also plotted
+
+```{r, warning=FALSE, out.width = '50%', fig.align='center'}
+ggqqplot(data$x.t)
+```
+
+
+
+## Normality test after data transformation
+
+```{r}
+pearson.test(data$x.t)
+```
+
+- From the output, the p-value > 0.05 implying that thedistribution of the data are not significantly different from normal distribution. In other words, we can assume the normality.
+
+
+
+## Post-Hoc ANOVA
+
+- Use package: [lme4](https://cran.r-project.org/web/packages/lme4/lme4.pdf)
+
+```{r, echo=FALSE, fig.cap="", out.width = '50%', fig.align="center", fig.retina = 2, fig.pos='h'}
+knitr::include_graphics("figures/lme4.png")
+```
+
+
+## Post-Hoc ANOVA
+
+Packages
+
+\scriptsize
+```{r echo=TRUE}
+library(lme4) # model
+library(emmeans) # anova
+library(lmerTest) # lsmeans
+library(lsmeans)
+```
+
+
+
+
+## Model
+
+- Mixed model:
+
+    *Fixed*: Variety
+    
+    *Random*: Year
+    
+```{r}
+fit <- lmer(yield ~ variety * site + (1|year), data=barley)
+```
+
+## Summary
+
+\scriptsize
+```{r}
+summary(fit)
+```
+
+## ANOVA
+
+\scriptsize
+```{r}
+anova(fit)
+```
+
+## Visual interaction
+
+\scriptsize
+```{r, out.width = '80%', fig.align='center'}
+emmip(fit, variety ~ site | site) # include CIs = TRUE
+```
+##
+
+```{r, out.width = '80%', fig.align='center'}
+plot(emmeans(fit, ~ site | site*variety))
+```
+## LS Means
+
+- Looking the **site** level (Factor)
+
+\scriptsize
+```{r, out.width = '60%'}
+lssite<-emmeans(fit, ~site, contr="pairwise", adjust="none", type="response")
+lssite$emmeans
+```
+
+## Plot
+
+- Plotting the site *level* (Factor)
+
+
+```{r, fig.height=2.3, fig.width=5, fig.align='center'}
+plot(lssite, comparisons =TRUE, adjust="none")
+```
+
+## LS Means
+
+- Looking the **variety** level (Factor)
+
+
+\scriptsize
+```{r}
+lsvar<-lsmeans(fit, ~variety, contr="pairwise", adjust="none", type="response")
+lsvar
+```
+## LS Means
+
+- Plotting the **variety** level (factor)
+
+```{r, warning=FALSE, fig.height=2.3, fig.width=5, fig.align='center'}
+plot(lsvar, comparisons =TRUE, adjust="none") 
+```
+
+## Non-Parametric Tests
+
+- Case of study: Percentage data (0 to 100%)
+
+  - Weed Control
+  - Disease 
+  - Insect damage
+  
+## Non-Parametric Tests
+
+- Cover crop management (Kolby's study)
+```{r include=FALSE}
+Data <- read_csv("Data.csv")
+Data$trtn <- as.factor(Data$trtn)
+```
+
+\scriptsize
+```{r}
+sample_n(Data, size=5)
+```
+- Values must be between 0 and 1
+
+
+## Generalized Linear Mixed Models using Template Model Builder
+
+- Fit linear and generalized linear mixed models with various extensions, including zero-inflation. The models are fitted using maximum likelihood estimation via 'TMB' (Template Model Builder)
+
+- Random effects are assumed to be Gaussian on the scale of the linear predictor and are integrated out using the Laplace approximation. Gradients are calculated using automatic differentiation
+
+## Homogeneity of variances
+
+- Bartlett test
+\scriptsize
+```{r}
+bartlett.test(control ~ trtn, data=Data)
+```
+
+\normalsize
+- levene test
+
+\scriptsize
+```{r}
+leveneTest(Data$control, Data$trtn)
+```
+
+
+
+## Model
+
+
+\scriptsize
+```{r}
+library(glmmTMB)
+model <- glmmTMB(control ~ trtn + (1|rep), data=Data,  beta_family(link = "logit"))
+```
+
+## Summary
+\scriptsize
+```{r}
+Sum <- summary(model)
+Sum$coefficients
+```
+
+## ANOVA
+\scriptsize
+
+- We should use Anova.glmmTBM
+
+```{r}
+Anova(model, test.statistic = "Chisq", type = "II")
+```
+
+## LS Means
+
+
+\scriptsize
+```{r}
+lsm=emmeans(model , ~ trtn, contr="pairwise", adjust="none", type = "response")
+lsm
+```
+
+## Plot
+
+```{r, fig.height=2.3, fig.width=5, fig.align='center'}
+plot(lsm, comparisons =TRUE, adjust="none")
+```
+
+##
+
+
+\scriptsize
+```{r}
+CLD(lsm, alpha=0.05, Letters=letters, adjust="none", reversed = TRUE)
+cld<-CLD(lsm, which = 1, details = TRUE, Letters=letters, adjust="none", reversed = TRUE, alpha=0.05)
+cld$emmeans
+```
+
+## Plotting
+
+```{r echo=FALSE, fig.align='center', out.width='70%', warning=FALSE}
+ggplot(cld$emmeans, aes(x = trtn, y=prop*100, label = .group, fill=trtn)) + 
+  geom_point(size=3) + #ylim(0, 100) +
+  geom_errorbar(aes(ymin  =  lower.CL*100, ymax  =  upper.CL*100), width =  0.1, size  =  0.5) +
+  theme_bw()  +
+  ylab("Weed control (%)") + xlab("") + 
+  geom_text(nudge_x = c(0, 0, 0, 0, 0, 0, 0, 0),
+            nudge_y = c(7, 7, 7, 7, 7, 7, 7, 7),
+            color   = "black", size=3) +  theme(legend.position="none")
+```
+
+
+
